@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/routes_manager/route_generator.dart';
 
+///Widget -> VM -> Usecase -> Repository -> DataSource
 void main() {
   runApp(const MainApp());
 }

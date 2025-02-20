@@ -1,22 +1,49 @@
+import 'package:ecommerce_app/core/di/di.dart';
 import 'package:ecommerce_app/core/resources/assets_manager.dart';
 import 'package:ecommerce_app/core/resources/color_manager.dart';
 import 'package:ecommerce_app/core/resources/values_manager.dart';
 import 'package:ecommerce_app/core/routes_manager/routes.dart';
+import 'package:ecommerce_app/core/utils/dialog_utils.dart';
 import 'package:ecommerce_app/core/widget/custom_elevated_button.dart';
 import 'package:ecommerce_app/core/widget/main_text_field.dart';
 import 'package:ecommerce_app/core/widget/validators.dart';
+import 'package:ecommerce_app/features/auth/presentation/screens/sign_in/cubit/signIn_cubit.dart';
+import 'package:ecommerce_app/features/auth/presentation/screens/sign_in/cubit/signin_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/resources/font_manager.dart';
-import '../../../../core/resources/styles_manager.dart';
+import '../../../../../core/resources/font_manager.dart';
+import '../../../../../core/resources/styles_manager.dart';
 
+///Bloc Listener - Bloc Builder - Bloc Consumer
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+  SignInScreen({super.key});
+
+  SignInCubit cubit = getIt();
 
   @override
   Widget build(BuildContext context) {
+    return BlocListener<SignInCubit, SignInState>(
+        bloc: cubit,
+
+        ///Line is required if we did not add BlocProvider
+        listener: (context, state) {
+          if (state.loginApiState.hasError) {
+            showMessage(context, state.loginApiState.errorMessage);
+          }
+          if (state.loginApiState.isSuccess) {
+            Navigator.pushNamed(context, Routes.mainRoute);
+          }
+          if (state.loginApiState.isLoading) {
+            showLoading(context);
+          }
+        },
+        child: buildPageBody(context));
+  }
+
+  Scaffold buildPageBody(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorManager.primary,
       body: SafeArea(
@@ -46,24 +73,11 @@ class SignInScreen extends StatelessWidget {
                 SizedBox(
                   height: AppSize.s50.h,
                 ),
-                BuildTextField(
-                  backgroundColor: ColorManager.white,
-                  hint: 'enter your name',
-                  label: 'User name',
-                  textInputType: TextInputType.emailAddress,
-                  validation: AppValidators.validateEmail,
-                ),
+                buildEmailTextField(),
                 SizedBox(
                   height: AppSize.s28.h,
                 ),
-                BuildTextField(
-                  hint: 'enter your password',
-                  backgroundColor: ColorManager.white,
-                  label: 'Password',
-                  validation: AppValidators.validatePassword,
-                  isObscured: true,
-                  textInputType: TextInputType.text,
-                ),
+                buildPasswordTextField(),
                 SizedBox(
                   height: AppSize.s8.h,
                 ),
@@ -82,23 +96,7 @@ class SignInScreen extends StatelessWidget {
                 SizedBox(
                   height: AppSize.s60.h,
                 ),
-                Center(
-                  child: SizedBox(
-                    // width: MediaQuery.of(context).size.width * .8,
-                    child: CustomElevatedButton(
-                      // borderRadius: AppSize.s8,
-                      isStadiumBorder: false,
-                      label: 'Login',
-                      backgroundColor: ColorManager.white,
-                      textStyle: getBoldStyle(
-                          color: ColorManager.primary, fontSize: AppSize.s18),
-                      onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, Routes.mainRoute, (route) => false);
-                      },
-                    ),
-                  ),
-                ),
+                buildLoginButton(context),
                 SizedBox(
                   height: 30.h,
                 ),
@@ -129,6 +127,47 @@ class SignInScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Center buildLoginButton(BuildContext context) {
+    return Center(
+      child: SizedBox(
+        // width: MediaQuery.of(context).size.width * .8,
+        child: CustomElevatedButton(
+          // borderRadius: AppSize.s8,
+          isStadiumBorder: false,
+          label: 'Login',
+          backgroundColor: ColorManager.white,
+          textStyle:
+              getBoldStyle(color: ColorManager.primary, fontSize: AppSize.s18),
+          onTap: () {
+            Navigator.pushNamedAndRemoveUntil(
+                context, Routes.mainRoute, (route) => false);
+          },
+        ),
+      ),
+    );
+  }
+
+  BuildTextField buildPasswordTextField() {
+    return BuildTextField(
+      hint: 'enter your password',
+      backgroundColor: ColorManager.white,
+      label: 'Password',
+      validation: AppValidators.validatePassword,
+      isObscured: true,
+      textInputType: TextInputType.text,
+    );
+  }
+
+  BuildTextField buildEmailTextField() {
+    return BuildTextField(
+      backgroundColor: ColorManager.white,
+      hint: 'enter your name',
+      label: 'User name',
+      textInputType: TextInputType.emailAddress,
+      validation: AppValidators.validateEmail,
     );
   }
 }
