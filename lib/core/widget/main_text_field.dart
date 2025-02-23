@@ -8,8 +8,8 @@ import '../resources/color_manager.dart';
 import '../resources/styles_manager.dart';
 import '../resources/values_manager.dart';
 
-class BuildTextField extends StatefulWidget {
-  const BuildTextField({
+class CustomTextField extends StatefulWidget {
+  const CustomTextField({
     super.key,
     this.controller,
     this.focusNode,
@@ -51,10 +51,10 @@ class BuildTextField extends StatefulWidget {
   final void Function()? onTap;
 
   @override
-  State<BuildTextField> createState() => _BuildTextFieldState();
+  State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
-class _BuildTextFieldState extends State<BuildTextField> {
+class _CustomTextFieldState extends State<CustomTextField> {
   late bool hidden = widget.isObscured;
   String? errorText;
 
