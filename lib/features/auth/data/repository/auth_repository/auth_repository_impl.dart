@@ -18,12 +18,7 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<ApiResult<void>> login(LoginRequest request) async {
     if (await _connectivity.isConnected) {
-      var result = await _remoteDataSource.login(request);
-      if (result is SuccessApiResult) {
-        return SuccessApiResult(null);
-      } else {
-        return ErrorApiResult(result.error);
-      }
+      return await _remoteDataSource.login(request);
     } else {
       return ErrorApiResult(NetworkError());
     }
@@ -32,12 +27,7 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<ApiResult<void>> register(RegisterRequest request) async {
     if (await _connectivity.isConnected) {
-      var result = await _remoteDataSource.register(request);
-      if (result is SuccessApiResult) {
-        return SuccessApiResult(null);
-      } else {
-        return ErrorApiResult(result.error);
-      }
+      return _remoteDataSource.register(request);
     } else {
       return ErrorApiResult(NetworkError());
     }

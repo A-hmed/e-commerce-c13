@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:ecommerce_app/core/network/api_result.dart';
 import 'package:ecommerce_app/core/network/errors.dart';
+import 'package:ecommerce_app/core/utils/shared_prefrences_helper.dart';
 import 'package:ecommerce_app/features/auth/data/model/request/login_request.dart';
 import 'package:ecommerce_app/features/auth/data/model/request/register_request.dart';
 import 'package:ecommerce_app/features/auth/data/model/response/auth_response.dart';
@@ -9,13 +10,15 @@ import 'package:injectable/injectable.dart';
 
 @Injectable(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
-  Dio _dio;
+  final Dio _dio;
+  final SharedPreferencesHelper _sharedPreferencesHelper;
 
-  AuthRemoteDataSourceImpl(this._dio);
+  AuthRemoteDataSourceImpl(this._dio, this._sharedPreferencesHelper);
 
   final String _loginUrl = "/api/v1/auth/signin";
   final String _registerUrl = "/api/v1/auth/signup";
 
+  @override
   Future<ApiResult<AuthResponse>> login(LoginRequest request) async {
     try {
       Response serverResponse =
@@ -25,6 +28,8 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
       if (serverResponse.statusCode! >= 200 &&
           serverResponse.statusCode! < 300) {
+        await _sharedPreferencesHelper.saveUser(myResponse.user);
+        await _sharedPreferencesHelper.saveToken(myResponse.token);
         return SuccessApiResult<AuthResponse>(myResponse);
       } else {
         return ErrorApiResult(ServerError(myResponse.message));
@@ -34,6 +39,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     }
   }
 
+  @override
   Future<ApiResult<AuthResponse>> register(RegisterRequest request) async {
     try {
       Response serverResponse =
@@ -42,6 +48,8 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
       if (serverResponse.statusCode! >= 200 &&
           serverResponse.statusCode! < 300) {
+        await _sharedPreferencesHelper.saveUser(myResponse.user);
+        await _sharedPreferencesHelper.saveToken(myResponse.token);
         return SuccessApiResult<AuthResponse>(myResponse);
       } else {
         return ErrorApiResult(ServerError(myResponse.message ?? ""));

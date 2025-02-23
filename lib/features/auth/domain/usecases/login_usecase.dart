@@ -5,11 +5,10 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class LoginUseCase {
-  AuthRepository _repository;
+  final AuthRepository _repository;
 
   LoginUseCase(this._repository);
 
-  Future<ApiResult<void>> execute(LoginRequest request) {
-    return _repository.login(request);
-  }
+  Future<ApiResult<void>> execute(LoginRequest request) =>
+      _repository.login(request);
 }

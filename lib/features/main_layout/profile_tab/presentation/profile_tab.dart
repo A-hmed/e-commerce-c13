@@ -54,7 +54,7 @@ class ProfileTabState extends State<ProfileTab> {
                     fontSize: FontSize.s14),
               ),
               SizedBox(height: AppSize.s18.h),
-              BuildTextField(
+              CustomTextField(
                 borderBackgroundColor: ColorManager.primary.withOpacity(.5),
                 readOnly: isFullNameReadOnly,
                 backgroundColor: ColorManager.white,
@@ -78,7 +78,7 @@ class ProfileTabState extends State<ProfileTab> {
                     .copyWith(fontSize: 18.sp),
               ),
               SizedBox(height: AppSize.s18.h),
-              BuildTextField(
+              CustomTextField(
                 borderBackgroundColor: ColorManager.primary.withOpacity(.5),
                 readOnly: isEmailReadOnly,
                 backgroundColor: ColorManager.white,
@@ -101,7 +101,7 @@ class ProfileTabState extends State<ProfileTab> {
                     .copyWith(fontSize: 18.sp),
               ),
               SizedBox(height: AppSize.s18.h),
-              BuildTextField(
+              CustomTextField(
                 onTap: () {
                   setState(() {
                     isPasswordReadOnly = false;
@@ -123,7 +123,7 @@ class ProfileTabState extends State<ProfileTab> {
                     .copyWith(fontSize: 18.sp),
               ),
               SizedBox(height: AppSize.s18.h),
-              BuildTextField(
+              CustomTextField(
                 controller: TextEditingController(text: '01122118855'),
                 borderBackgroundColor: ColorManager.primary.withOpacity(.5),
                 readOnly: isMobileNumberReadOnly,
@@ -146,7 +146,7 @@ class ProfileTabState extends State<ProfileTab> {
                     .copyWith(fontSize: 18.sp),
               ),
               SizedBox(height: AppSize.s18.h),
-              BuildTextField(
+              CustomTextField(
                 controller:
                     TextEditingController(text: '6th October, street 11.....'),
                 borderBackgroundColor: ColorManager.primary.withOpacity(.5),

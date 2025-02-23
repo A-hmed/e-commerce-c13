@@ -31,7 +31,7 @@ class SignUpScreen extends StatelessWidget {
                 SizedBox(
                   height: AppSize.s40.h,
                 ),
-                BuildTextField(
+                CustomTextField(
                   backgroundColor: ColorManager.white,
                   hint: 'enter your full name',
                   label: 'Full Name',
@@ -41,7 +41,7 @@ class SignUpScreen extends StatelessWidget {
                 SizedBox(
                   height: AppSize.s18.h,
                 ),
-                BuildTextField(
+                CustomTextField(
                   hint: 'enter your mobile no.',
                   backgroundColor: ColorManager.white,
                   label: 'Mobile Number',
@@ -51,7 +51,7 @@ class SignUpScreen extends StatelessWidget {
                 SizedBox(
                   height: AppSize.s18.h,
                 ),
-                BuildTextField(
+                CustomTextField(
                   hint: 'enter your email address',
                   backgroundColor: ColorManager.white,
                   label: 'E-mail address',
@@ -61,7 +61,7 @@ class SignUpScreen extends StatelessWidget {
                 SizedBox(
                   height: AppSize.s18.h,
                 ),
-                BuildTextField(
+                CustomTextField(
                   hint: 'enter your password',
                   backgroundColor: ColorManager.white,
                   label: 'password',

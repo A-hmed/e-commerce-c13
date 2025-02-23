@@ -12,9 +12,13 @@ class SignInCubit extends Cubit<SignInState> {
   SignInCubit(this._loginUseCase) : super(SignInState.initial());
 
   void login(String email, String password) async {
+    print(
+        "Emitting new state: ${SignInState(loginApiState: LoadingApiState()).loginApiState}");
     emit(SignInState(loginApiState: LoadingApiState()));
+
     var apiResult = await _loginUseCase
         .execute(LoginRequest(email: email, password: password));
+
     if (apiResult.hasData) {
       emit(SignInState(loginApiState: SuccessApiState(null)));
     } else {

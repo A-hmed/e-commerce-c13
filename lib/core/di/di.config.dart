@@ -9,8 +9,24 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
+import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+
+import '../../features/auth/data/repository/auth_repository/auth_repository_impl.dart'
+    as _i859;
+import '../../features/auth/data/repository/auth_repository/data_sources/auth_remote_datasource/auth_remote_datasource.dart'
+    as _i367;
+import '../../features/auth/data/repository/auth_repository/data_sources/auth_remote_datasource/auth_remote_datasource_impl.dart'
+    as _i298;
+import '../../features/auth/domain/repository/auth_repository.dart' as _i961;
+import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/auth/domain/usecases/register_usecase.dart' as _i941;
+import '../../features/auth/presentation/screens/sign_in/cubit/signIn_cubit.dart'
+    as _i965;
+import '../utils/shared_prefrences_helper.dart' as _i419;
+import 'di_module.dart' as _i211;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -18,11 +34,32 @@ extension GetItInjectableX on _i174.GetIt {
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
   }) {
-    _i526.GetItHelper(
+    final gh = _i526.GetItHelper(
       this,
       environment,
       environmentFilter,
     );
+    final diModule = _$DiModule();
+    gh.singleton<_i361.Dio>(() => diModule.initDio());
+    gh.singleton<_i895.Connectivity>(() => diModule.getConnectivity());
+    gh.singleton<_i419.SharedPreferencesHelper>(
+        () => _i419.SharedPreferencesHelper());
+    gh.factory<_i367.AuthRemoteDataSource>(() => _i298.AuthRemoteDataSourceImpl(
+          gh<_i361.Dio>(),
+          gh<_i419.SharedPreferencesHelper>(),
+        ));
+    gh.factory<_i961.AuthRepository>(() => _i859.AuthRepositoryImpl(
+          gh<_i367.AuthRemoteDataSource>(),
+          gh<_i895.Connectivity>(),
+        ));
+    gh.factory<_i188.LoginUseCase>(
+        () => _i188.LoginUseCase(gh<_i961.AuthRepository>()));
+    gh.factory<_i941.RegisterUseCase>(
+        () => _i941.RegisterUseCase(gh<_i961.AuthRepository>()));
+    gh.factory<_i965.SignInCubit>(
+        () => _i965.SignInCubit(gh<_i188.LoginUseCase>()));
     return this;
   }
 }
+
+class _$DiModule extends _i211.DiModule {}

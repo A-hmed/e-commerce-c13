@@ -18,10 +18,19 @@ import '../../../../../core/resources/font_manager.dart';
 import '../../../../../core/resources/styles_manager.dart';
 
 ///Bloc Listener - Bloc Builder - Bloc Consumer
-class SignInScreen extends StatelessWidget {
-  SignInScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
   SignInCubit cubit = getIt();
+
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +39,14 @@ class SignInScreen extends StatelessWidget {
 
         ///Line is required if we did not add BlocProvider
         listener: (context, state) {
+          print("BlocListener: ${state.loginApiState}");
           if (state.loginApiState.hasError) {
-            showMessage(context, state.loginApiState.errorMessage);
+            hideLoading(context);
+            showMessage(context, state.loginApiState.errorMessage,
+                posButtonTitle: "OK");
           }
           if (state.loginApiState.isSuccess) {
+            hideLoading(context);
             Navigator.pushNamed(context, Routes.mainRoute);
           }
           if (state.loginApiState.isLoading) {
@@ -142,16 +155,16 @@ class SignInScreen extends StatelessWidget {
           textStyle:
               getBoldStyle(color: ColorManager.primary, fontSize: AppSize.s18),
           onTap: () {
-            Navigator.pushNamedAndRemoveUntil(
-                context, Routes.mainRoute, (route) => false);
+            cubit.login(_emailController.text, _passwordController.text);
           },
         ),
       ),
     );
   }
 
-  BuildTextField buildPasswordTextField() {
-    return BuildTextField(
+  CustomTextField buildPasswordTextField() {
+    return CustomTextField(
+      controller: _passwordController,
       hint: 'enter your password',
       backgroundColor: ColorManager.white,
       label: 'Password',
@@ -161,9 +174,10 @@ class SignInScreen extends StatelessWidget {
     );
   }
 
-  BuildTextField buildEmailTextField() {
-    return BuildTextField(
+  CustomTextField buildEmailTextField() {
+    return CustomTextField(
       backgroundColor: ColorManager.white,
+      controller: _emailController,
       hint: 'enter your name',
       label: 'User name',
       textInputType: TextInputType.emailAddress,
