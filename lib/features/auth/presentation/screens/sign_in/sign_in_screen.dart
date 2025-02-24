@@ -21,15 +21,21 @@ class SignInScreen extends StatelessWidget {
   SignInScreen({super.key});
 
   SignInCubit cubit = getIt();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignInCubit, SignInCubitState>(
+        bloc: cubit,
         listener: (context, state) {
           if (state.loginState.isSuccess) {
+            hideLoading(context);
             Navigator.pushNamed(context, Routes.mainRoute);
           } else if (state.loginState.hasError) {
-            showMessage(context, state.loginState.errorMessage);
+            hideLoading(context);
+            showMessage(context, state.loginState.errorMessage,
+                posButtonTitle: "ok");
           } else if (state.loginState.isLoading) {
             showLoading(context);
           }
@@ -124,7 +130,9 @@ class SignInScreen extends StatelessWidget {
           backgroundColor: ColorManager.white,
           textStyle:
               getBoldStyle(color: ColorManager.primary, fontSize: AppSize.s18),
-          onTap: () {},
+          onTap: () {
+            cubit.login(_emailController.text, _passwordController.text);
+          },
         ),
       ),
     );
@@ -147,6 +155,7 @@ class SignInScreen extends StatelessWidget {
 
   CustomTextField buildPasswordTextField() {
     return CustomTextField(
+      controller: _passwordController,
       hint: 'enter your password',
       backgroundColor: ColorManager.white,
       label: 'Password',
@@ -158,6 +167,7 @@ class SignInScreen extends StatelessWidget {
 
   CustomTextField buildEmailTextField() {
     return CustomTextField(
+      controller: _emailController,
       backgroundColor: ColorManager.white,
       hint: 'enter your name',
       label: 'User name',

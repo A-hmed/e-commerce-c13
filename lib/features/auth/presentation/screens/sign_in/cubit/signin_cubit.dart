@@ -8,7 +8,7 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class SignInCubit extends Cubit<SignInCubitState> {
-  LoginUseCase _loginUseCase;
+  final LoginUseCase _loginUseCase;
 
   SignInCubit(this._loginUseCase) : super(SignInCubitState.initial());
 

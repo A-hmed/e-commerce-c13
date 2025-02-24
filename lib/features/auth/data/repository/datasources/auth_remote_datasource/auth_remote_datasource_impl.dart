@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:ecommerce_app/core/extensions/int_extensions.dart';
 import 'package:ecommerce_app/core/network/api_result.dart';
 import 'package:ecommerce_app/core/network/errors.dart';
+import 'package:ecommerce_app/core/utils/app_prefernces.dart';
 import 'package:ecommerce_app/features/auth/data/model/request/login_request.dart';
 import 'package:ecommerce_app/features/auth/data/model/request/register_request.dart';
 import 'package:ecommerce_app/features/auth/data/model/response/auth_response.dart';
@@ -14,8 +15,9 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   final String _loginUrl = "/api/v1/auth/signin";
   final String _registerUrl = "/api/v1/auth/signup";
   final Dio _dio;
+  final AppPreferences pref;
 
-  AuthRemoteDataSourceImpl(this._dio);
+  AuthRemoteDataSourceImpl(this._dio, this.pref);
 
   @override
   Future<ApiResult<AuthResponse>> login(LoginRequest request) async {
@@ -23,7 +25,11 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       var serverResponse = await _dio.post(_loginUrl, data: request.toJson());
       var json = serverResponse.data;
       var authResponse = AuthResponse.fromJson(json);
-      if (serverResponse.statusCode!.isSuccess) {
+      if (serverResponse.statusCode!.isSuccess &&
+          authResponse.token != null &&
+          authResponse.user != null) {
+        pref.saveUser(authResponse.user!);
+        pref.saveToken(authResponse.token!);
         return SuccessApiResult(authResponse);
       } else {
         return ErrorApiResult(ServerError(authResponse.message));
