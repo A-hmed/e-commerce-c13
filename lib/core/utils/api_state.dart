@@ -11,7 +11,7 @@ class ApiState<T> {
 
   AppErrors get error => (this as ErrorApiState).appErrors;
 
-  T getData() => (this as SuccessApiState<T>).data;
+  T get data => (this as SuccessApiState<T>).data;
 }
 
 class SuccessApiState<E> extends ApiState<E> {

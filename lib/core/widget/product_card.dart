@@ -1,25 +1,15 @@
-import 'package:ecommerce_app/core/resources/assets_manager.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_app/core/resources/color_manager.dart';
 import 'package:ecommerce_app/core/resources/styles_manager.dart';
+import 'package:ecommerce_app/features/main_layout/domain/model/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductCard extends StatelessWidget {
-  final String image;
-  final String title;
-  final double price;
-  final String description;
-  final double priceBeforeDiscound;
-  final double rating;
-
+  final Product product;
   const ProductCard({
     super.key,
-    required this.image,
-    required this.title,
-    required this.price,
-    required this.rating,
-    required this.priceBeforeDiscound,
-    required this.description,
+    required this.product,
   });
   String truncateTitle(String title) {
     List<String> words = title.split(' ');
@@ -50,76 +40,24 @@ class ProductCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Expanded(
-            //   flex: 1,
-            //   child: ClipRRect(
-            //     borderRadius: const BorderRadius.only(
-            //       topLeft: Radius.circular(24),
-            //       topRight: Radius.circular(24),
-            //     ),
-            //     child: AspectRatio(
-            //       aspectRatio: 16 / 9,
-            //       child: CachedNetworkImage(
-            //         imageUrl: product.imageCover ?? "",
-            //         fit: BoxFit.fill,
-            //         placeholder: (context, url) =>
-            //             const Center(child: CircularProgressIndicator()),
-            //         errorWidget: (context, url, error) =>
-            //             const Center(child: Icon(Icons.error)),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
             Expanded(
               flex: 1,
-              child: Stack(
-                alignment: AlignmentDirectional.center,
-                children: [
-                  SizedBox(
-                    height: height,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24.r),
-                        topRight: Radius.circular(24.r),
-                      ),
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: Image.asset(
-                          image,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: CachedNetworkImage(
+                    imageUrl: product.imageCover ?? "",
+                    fit: BoxFit.fill,
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) =>
+                        const Center(child: Icon(Icons.error)),
                   ),
-                  Positioned(
-                    top: height * 0.01,
-                    right: width * 0.02,
-                    child: Container(
-                      height: height * 0.036,
-                      width: width * 0.08,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: InkWell(
-                        onTap: () {},
-                        child: Image.asset(
-                          IconsAssets.icWithList,
-                          color: ColorManager.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             Expanded(
@@ -130,26 +68,30 @@ class ProductCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      truncateTitle(title),
+                      truncateTitle(product.title),
                       style: getMediumStyle(
                         color: ColorManager.primary,
                         fontSize: 16.sp,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      truncateTitle(description),
+                      truncateTitle(product.description),
                       style: getRegularStyle(
                         color: ColorManager.primary,
                         fontSize: 14.sp,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 8.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "EGP $price",
+                          "EGP ${product.price}",
                           softWrap: true,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -158,10 +100,10 @@ class ProductCard extends StatelessWidget {
                             fontSize: 14.sp,
                           ),
                         ),
-                        Text(
-                          "$priceBeforeDiscound EGP ",
-                          style: getTextWithLine(),
-                        ),
+                        // Text(
+                        //   "${product.} EGP ",
+                        //   style: getTextWithLine(),
+                        // ),
                       ],
                     ),
                     Row(
@@ -178,7 +120,7 @@ class ProductCard extends StatelessWidget {
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              "$rating",
+                              "${product.ratingsAverage}",
                               style: getRegularStyle(
                                 color: ColorManager.primary,
                                 fontSize: 14.sp,
