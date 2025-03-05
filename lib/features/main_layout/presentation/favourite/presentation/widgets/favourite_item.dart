@@ -4,8 +4,9 @@ import 'package:ecommerce_app/core/resources/constants_manager.dart';
 import 'package:ecommerce_app/core/resources/values_manager.dart';
 import 'package:ecommerce_app/core/routes_manager/routes.dart';
 import 'package:ecommerce_app/core/widget/heart_button.dart';
-import 'package:ecommerce_app/features/main_layout/favourite/presentation/widgets/add_to_cart_button.dart';
-import 'package:ecommerce_app/features/main_layout/favourite/presentation/widgets/favourite_item_details.dart';
+import 'package:ecommerce_app/features/main_layout/presentation/favourite/presentation/widgets/add_to_cart_button.dart';
+import 'package:ecommerce_app/features/main_layout/presentation/favourite/presentation/widgets/favourite_item_details.dart'
+    show FavouriteItemDetails;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

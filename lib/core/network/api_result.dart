@@ -9,7 +9,7 @@ class ApiResult<T> {
 
   AppErrors get error => (this as ErrorApiResult).appError;
 
-  T getData() => (this as SuccessApiResult<T>).data;
+  T get data => (this as SuccessApiResult<T>).data;
 }
 
 class SuccessApiResult<T> extends ApiResult<T> {
