@@ -5,5 +5,8 @@ import 'package:ecommerce_app/features/main_layout/data/model/response/products_
 abstract class HomeRemoteDataSource {
   Future<ApiResult<CategoriesResponse>> getCategories();
 
-  Future<ApiResult<ProductsResponse>> getProducts();
+  Future<ApiResult<ProductsResponse>> getProducts(
+      String? parentCategory, String? subCategory);
+
+  Future<ApiResult<CategoriesResponse>> getSubCategories(String categoryId);
 }

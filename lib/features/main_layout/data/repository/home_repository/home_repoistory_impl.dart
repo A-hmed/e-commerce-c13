@@ -41,12 +41,30 @@ class HomeRepositoryImpl extends HomeRepository {
   }
 
   @override
-  Future<ApiResult<List<Product>>> getProducts() async {
+  Future<ApiResult<List<Product>>> getProducts(
+      String? parentCategory, String? subCategory) async {
     if (await _connectivity.isConnected) {
-      ApiResult<ProductsResponse> response = await _dataSource.getProducts();
+      ApiResult<ProductsResponse> response =
+          await _dataSource.getProducts(parentCategory, subCategory);
       if (response.hasData) {
         List<ProductDM> models = response.data.data ?? [];
         return SuccessApiResult(_productMapper.fromDataModels(models));
+      } else {
+        return ErrorApiResult(response.error);
+      }
+    } else {
+      return ErrorApiResult(NetworkError());
+    }
+  }
+
+  @override
+  Future<ApiResult<List<Category>>> getSubCategories(String categoryId) async {
+    if (await _connectivity.isConnected) {
+      ApiResult<CategoriesResponse> response =
+          await _dataSource.getSubCategories(categoryId);
+      if (response.hasData) {
+        List<CategoryDM> models = response.data.categories ?? [];
+        return SuccessApiResult(_categoryMapper.fromDataModels(models));
       } else {
         return ErrorApiResult(response.error);
       }

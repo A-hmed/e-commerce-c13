@@ -1,11 +1,16 @@
 import 'package:ecommerce_app/core/resources/color_manager.dart';
 import 'package:ecommerce_app/core/resources/values_manager.dart';
+import 'package:ecommerce_app/features/main_layout/domain/model/category.dart';
 import 'package:flutter/material.dart';
 
 import 'category_item.dart';
 
 class CategoriesList extends StatefulWidget {
-  const CategoriesList({super.key});
+  final List<Category> categories;
+  final Function onCategoryClick;
+
+  const CategoriesList(
+      {super.key, required this.categories, required this.onCategoryClick});
 
   @override
   State<CategoriesList> createState() => _CategoriesListState();
@@ -16,9 +21,15 @@ class _CategoriesListState extends State<CategoriesList> {
   int selectedIndex = 0;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.onCategoryClick(widget.categories[0]);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Container(
+    return Container(
       decoration: BoxDecoration(
         color: ColorManager.containerGray,
         border: Border(
@@ -46,16 +57,20 @@ class _CategoriesListState extends State<CategoriesList> {
           bottomLeft: Radius.circular(AppSize.s12),
         ),
         child: ListView.builder(
-          itemCount: 20,
-          itemBuilder: (context, index) => CategoryItem(index,
-              "Laptops & Electronics", selectedIndex == index, onItemClick),
+          itemCount: widget.categories.length,
+          itemBuilder: (context, index) => CategoryItem(
+              index,
+              "${widget.categories[index].name}",
+              selectedIndex == index,
+              onItemClick),
         ),
       ),
-    ));
+    );
   }
 
   // callback function to change the selected index
   onItemClick(int index) {
+    widget.onCategoryClick(widget.categories[index]);
     setState(() {
       selectedIndex = index;
     });

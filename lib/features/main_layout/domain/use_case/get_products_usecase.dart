@@ -9,5 +9,7 @@ class GetProductsUseCase {
 
   GetProductsUseCase(this._repo);
 
-  Future<ApiResult<List<Product>>> execute() => _repo.getProducts();
+  Future<ApiResult<List<Product>>> execute(
+          [String? parentCategory, String? subCategory]) =>
+      _repo.getProducts(parentCategory, subCategory);
 }

@@ -15,6 +15,10 @@ class HomeRemoteDataSourceImpl extends HomeRemoteDataSource {
 
   HomeRemoteDataSourceImpl(this._dio);
 
+  String getSubCategoryUrl(String categoryId) {
+    return "/api/v1/categories/$categoryId/subcategories";
+  }
+
   @override
   Future<ApiResult<CategoriesResponse>> getCategories() async {
     try {
@@ -33,11 +37,39 @@ class HomeRemoteDataSourceImpl extends HomeRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<ProductsResponse>> getProducts() async {
+  Future<ApiResult<ProductsResponse>> getProducts(
+      String? parentCategory, String? subCategory) async {
+    String queryParameters = "";
+    if (parentCategory != null) {
+      queryParameters += "?category[in]=$parentCategory";
+    }
+    if (subCategory != null) {
+      queryParameters += "&category[in]=$subCategory";
+    }
     try {
-      Response serverResponse = await _dio.get(_productsUrl);
+      Response serverResponse = await _dio.get(
+        "$_productsUrl$queryParameters",
+      );
       ProductsResponse myResponse =
           ProductsResponse.fromJson(serverResponse.data);
+
+      if (serverResponse.statusCode!.isSuccess) {
+        return SuccessApiResult(myResponse);
+      } else {
+        return ErrorApiResult(ServerError());
+      }
+    } catch (e) {
+      return ErrorApiResult(ServerError());
+    }
+  }
+
+  @override
+  Future<ApiResult<CategoriesResponse>> getSubCategories(
+      String categoryId) async {
+    try {
+      Response serverResponse = await _dio.get(getSubCategoryUrl(categoryId));
+      CategoriesResponse myResponse =
+          CategoriesResponse.fromJson(serverResponse.data);
 
       if (serverResponse.statusCode!.isSuccess) {
         return SuccessApiResult(myResponse);

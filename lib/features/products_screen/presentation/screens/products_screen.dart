@@ -1,12 +1,33 @@
+import 'package:ecommerce_app/core/di/di.dart';
 import 'package:ecommerce_app/core/resources/values_manager.dart';
-import 'package:ecommerce_app/features/products_screen/presentation/widgets/custom_product_widget.dart';
+import 'package:ecommerce_app/core/widget/product_card.dart';
+import 'package:ecommerce_app/features/products_screen/presentation/cubit/products_cubit.dart';
+import 'package:ecommerce_app/features/products_screen/presentation/cubit/proudcts_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/resources/assets_manager.dart';
 import '../../../../core/widget/home_screen_app_bar.dart';
 
-class ProductsScreen extends StatelessWidget {
-  const ProductsScreen({super.key});
+class ProductsScreen extends StatefulWidget {
+  final String categoryId;
+  final String subCategoryId;
+
+  const ProductsScreen(
+      {super.key, required this.categoryId, required this.subCategoryId});
+
+  @override
+  State<ProductsScreen> createState() => _ProductsScreenState();
+}
+
+class _ProductsScreenState extends State<ProductsScreen> {
+  final ProductsCubit _cubit = getIt();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _cubit.loadProducts(widget.categoryId, widget.subCategoryId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,38 +37,43 @@ class ProductsScreen extends StatelessWidget {
       appBar: const HomeScreenAppBar(
         automaticallyImplyLeading: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(AppPadding.p16),
-        child: Column(
-          children: [
-            Expanded(
-              child: GridView.builder(
-                itemCount: 20,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 7 / 9,
+      body: BlocBuilder<ProductsCubit, ProductState>(
+          bloc: _cubit,
+          builder: (context, state) {
+            if (state.productsApi.isSuccess) {
+              return Padding(
+                padding: const EdgeInsets.all(AppPadding.p16),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: GridView.builder(
+                        itemCount: state.productsApi.data.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          childAspectRatio: 7 / 9,
+                        ),
+                        itemBuilder: (context, index) {
+                          return ProductCard(
+                            product: state.productsApi.data[index],
+                          );
+                        },
+                        scrollDirection: Axis.vertical,
+                      ),
+                    )
+                  ],
                 ),
-                itemBuilder: (context, index) {
-                  return CustomProductWidget(
-                    image: ImageAssets.categoryHomeImage,
-                    title: "Nike Air Jordon",
-                    price: 1100,
-                    rating: 4.7,
-                    discountPercentage: 10,
-                    height: height,
-                    width: width,
-                    description:
-                        "Nike is a multinational corporation that designs, develops, and sells athletic footwear ,apparel, and accessories",
-                  );
-                },
-                scrollDirection: Axis.vertical,
-              ),
-            )
-          ],
-        ),
-      ),
+              );
+            } else if (state.productsApi.hasError) {
+              return ErrorWidget(state.productsApi.error);
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 }
