@@ -27,7 +27,7 @@ class CartItemWidget extends StatelessWidget {
   final Color color;
   final String colorName;
   final int size;
-  final int price;
+  final double price;
   final void Function() onDeleteTap;
   final int quantity;
   final void Function(int value) onIncrementTap;
@@ -54,7 +54,7 @@ class CartItemWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(15.r),
               border: Border.all(color: ColorManager.primary.withOpacity(0.3)),
             ),
-            child: Image.asset(
+            child: Image.network(
               imagePath,
               fit: BoxFit.cover,
               height: isPortrait ? height * 0.142 : height * 0.23,

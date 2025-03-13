@@ -5,6 +5,8 @@ class ApiState<T> {
 
   bool get isSuccess => this is SuccessApiState;
 
+  bool get isIdle => this is IdleApiState;
+
   bool get isLoading => this is LoadingApiState;
 
   String get errorMessage => (this as ErrorApiState).appErrors.errorMessage;

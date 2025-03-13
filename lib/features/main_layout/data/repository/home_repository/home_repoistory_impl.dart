@@ -26,7 +26,7 @@ class HomeRepositoryImpl extends HomeRepository {
 
   @override
   Future<ApiResult<List<Category>>> getCategories() async {
-    if (await _connectivity.isConnected) {
+    if (true) {
       ApiResult<CategoriesResponse> response =
           await _dataSource.getCategories();
       if (response.hasData) {
@@ -43,7 +43,7 @@ class HomeRepositoryImpl extends HomeRepository {
   @override
   Future<ApiResult<List<Product>>> getProducts(
       String? parentCategory, String? subCategory) async {
-    if (await _connectivity.isConnected) {
+    if (true) {
       ApiResult<ProductsResponse> response =
           await _dataSource.getProducts(parentCategory, subCategory);
       if (response.hasData) {

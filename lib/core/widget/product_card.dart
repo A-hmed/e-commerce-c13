@@ -1,18 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_app/core/resources/color_manager.dart';
 import 'package:ecommerce_app/core/resources/styles_manager.dart';
+import 'package:ecommerce_app/core/utils/api_state.dart';
+import 'package:ecommerce_app/features/cart/presentaion/screens/cubit/cart_cubit.dart';
 import 'package:ecommerce_app/features/main_layout/domain/model/product.dart';
 import 'package:ecommerce_app/features/product_details/presentation/screen/product_details.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final Product product;
 
   const ProductCard({
     super.key,
     required this.product,
   });
+
+  @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  late CartCubit cartCubit = BlocProvider.of(context);
 
   String truncateTitle(String title) {
     List<String> words = title.split(' ');
@@ -30,7 +40,7 @@ class ProductCard extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (_) => ProductDetails(product: product)));
+                builder: (_) => ProductDetails(product: widget.product)));
       },
       child: SizedBox(
         width: 200.w,
@@ -58,7 +68,7 @@ class ProductCard extends StatelessWidget {
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
                     child: CachedNetworkImage(
-                      imageUrl: product.imageCover ?? "",
+                      imageUrl: widget.product.imageCover ?? "",
                       fit: BoxFit.fill,
                       placeholder: (context, url) =>
                           const Center(child: CircularProgressIndicator()),
@@ -76,7 +86,7 @@ class ProductCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        truncateTitle(product.title),
+                        truncateTitle(widget.product.title),
                         style: getMediumStyle(
                           color: ColorManager.primary,
                           fontSize: 16.sp,
@@ -86,7 +96,7 @@ class ProductCard extends StatelessWidget {
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        truncateTitle(product.description),
+                        truncateTitle(widget.product.description),
                         style: getRegularStyle(
                           color: ColorManager.primary,
                           fontSize: 14.sp,
@@ -99,7 +109,7 @@ class ProductCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "EGP ${product.price}",
+                            "EGP ${widget.product.price}",
                             softWrap: true,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -128,7 +138,7 @@ class ProductCard extends StatelessWidget {
                               ),
                               SizedBox(width: 4.w),
                               Text(
-                                "${product.ratingsAverage}",
+                                "${widget.product.ratingsAverage}",
                                 style: getRegularStyle(
                                   color: ColorManager.primary,
                                   fontSize: 14.sp,
@@ -136,14 +146,7 @@ class ProductCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                          InkWell(
-                            onTap: () {},
-                            child: Icon(
-                              Icons.add_circle_rounded,
-                              color: ColorManager.primary,
-                              size: 36,
-                            ),
-                          ),
+                          buildCartButton(),
                         ],
                       ),
                     ],
@@ -154,6 +157,38 @@ class ProductCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  InkWell buildCartButton() {
+    return InkWell(
+      onTap: () {
+        cartCubit.isInCart(widget.product.id)
+            ? cartCubit.removeProduct(widget.product.id)
+            : cartCubit.addProduct(widget.product.id);
+      },
+      child: BlocBuilder<CartCubit, ApiState>(builder: (context, state) {
+        //todo: Fix me infinite rebuilding
+        return cartCubit.isInCart(widget.product.id)
+            ? buildRemoveIcon()
+            : buildAddIcon();
+      }),
+    );
+  }
+
+  Icon buildAddIcon() {
+    return Icon(
+      Icons.add_circle_rounded,
+      color: ColorManager.primary,
+      size: 36,
+    );
+  }
+
+  Icon buildRemoveIcon() {
+    return Icon(
+      Icons.remove_circle,
+      color: ColorManager.primary,
+      size: 36,
     );
   }
 }

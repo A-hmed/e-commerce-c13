@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:ecommerce_app/core/utils/shared_prefrences_helper.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 abstract class DioHelper {
@@ -8,10 +9,11 @@ abstract class DioHelper {
     Dio dio = Dio();
     dio.options = BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: Duration(seconds: 3),
-        receiveTimeout: Duration(seconds: 3));
+      // connectTimeout: Duration(seconds: 3),
+      // receiveTimeout: Duration(seconds: 3)
+    );
 
-    //dio.interceptors.add(CustomLoggingInterceptor());
+    dio.interceptors.add(AuthInterceptor());
     dio.interceptors.add(PrettyDioLogger(
       requestHeader: true,
       requestBody: true,
@@ -27,17 +29,15 @@ abstract class DioHelper {
   }
 }
 
-class CustomLoggingInterceptor extends Interceptor {
+class AuthInterceptor extends Interceptor {
+  SharedPreferencesHelper prefs = SharedPreferencesHelper();
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print("Request(${options.method}): ${options.path}");
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    options.headers = {
+      //"Authorization":"Bearer Token ${}"
+      "token": await prefs.getToken()
+    };
     super.onRequest(options, handler);
-  }
-
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print(
-        "Response(${response.statusCode}): ${response.realUri.path} -> Data: ${response.data}");
-    super.onResponse(response, handler);
   }
 }

@@ -12,6 +12,8 @@ class Product {
   String imageCover;
   Category? category;
   num ratingsAverage;
+  int? totalItemsInCart;
+  double? totalPriceCart;
 
   Product({
     this.sold = 0,
@@ -25,5 +27,7 @@ class Product {
     this.imageCover = "",
     this.category,
     this.ratingsAverage = 0,
+    this.totalItemsInCart = 0,
+    this.totalPriceCart = 0,
   });
 }
